@@ -8,7 +8,6 @@ from app import models
 from app.api.router import api_router
 from app.core.config import settings
 from app.core.database import Base, engine
-from app.services.cover_processing_service import init_ocr_reader
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s [%(name)s] %(message)s")
 
@@ -67,11 +66,6 @@ def create_app() -> FastAPI:
     _ensure_local_spreadsheet()
 
     Base.metadata.create_all(bind=engine)
-    # Optional preload only when explicitly enabled.
-    # Default behavior is lazy initialization on first OCR request to reduce startup memory.
-    if os.getenv("OCR_PRELOAD", "").strip().lower() in {"1", "true", "yes"}:
-        init_ocr_reader()
-
     app.include_router(api_router, prefix=settings.API_PREFIX)
     return app
 
