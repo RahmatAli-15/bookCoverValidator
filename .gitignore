@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+backend/venv/
+
+# Frontend
+node_modules/
+frontend/node_modules/
+dist/
+frontend/dist/
+
+# Environment
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Storage artifacts
+storage/uploads/*
+storage/processed/*
+storage/annotations/*
+!storage/uploads/.gitkeep
+!storage/processed/.gitkeep
+!storage/processed/ocr_results/
+!storage/processed/ocr_results/.gitkeep
+!storage/processed/reports/
+!storage/processed/reports/.gitkeep
+!storage/processed/notifications/
+!storage/processed/notifications/.gitkeep
+!storage/annotations/.gitkeep

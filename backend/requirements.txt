@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+easyocr
+opencv-python
+pillow
+pymupdf
+sqlalchemy
+python-multipart
+aiofiles
+requests
+google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib

@@ -1,0 +1,21 @@
+To: publishing-ops@example.com
+Subject: Book Cover QA Result: REVIEW_NEEDED
+
+Hello Publishing Team,
+
+Your cover requires revision before approval.
+
+Validation Result: REVIEW_NEEDED
+Publishing Readiness Score: 58/100
+
+Detected Issues:
+- Text-like pattern detected in reserved badge area; manual review required. (severity: HIGH)
+
+Correction Guidance:
+- Reposition nearby text to remove ambiguous overlap risk.
+
+Next Steps:
+Apply corrections and re-upload using the same ISBN filename convention.
+
+Regards,
+Publishing QA Automation

@@ -1,0 +1,18 @@
+{
+  "status": "pending",
+  "message": "Airtable integration not configured.",
+  "record_id": null,
+  "fields": {
+    "ISBN": "9789889652364",
+    "filename": "9789889652364_text.png",
+    "validation_status": "REVIEW_NEEDED",
+    "confidence_score": 0.7728,
+    "readiness_score": 83,
+    "issue_count": 1,
+    "issue_severity": "MEDIUM",
+    "correction_instructions": "- Increase spacing between subtitle and badge zone.",
+    "processing_timestamp": "2026-05-26T16:39:56.884774+00:00",
+    "annotation_image_path": "storage\\annotations\\job_96_20260526163956746362.png",
+    "revision_history": "job_96_latest"
+  }
+}

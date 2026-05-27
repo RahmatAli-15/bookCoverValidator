@@ -1,0 +1,18 @@
+{
+  "status": "pending",
+  "message": "Airtable integration not configured.",
+  "record_id": null,
+  "fields": {
+    "ISBN": "9789373147765",
+    "filename": "9789373147765_text.png",
+    "validation_status": "REVIEW_NEEDED",
+    "confidence_score": 0.3107,
+    "readiness_score": 56,
+    "issue_count": 1,
+    "issue_severity": "HIGH",
+    "correction_instructions": "- Reposition nearby text to remove ambiguous overlap risk.",
+    "processing_timestamp": "2026-05-26T16:37:52.374326+00:00",
+    "annotation_image_path": "storage\\annotations\\job_88_20260526163752278383.png",
+    "revision_history": "job_88_latest"
+  }
+}
