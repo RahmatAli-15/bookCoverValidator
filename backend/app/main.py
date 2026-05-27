@@ -48,7 +48,7 @@ def create_app() -> FastAPI:
     frontend_url = os.getenv("FRONTEND_URL", "").strip()
     allowed_origins = ["http://localhost:5173", "http://localhost:5174"]
     if frontend_url:
-      allowed_origins.append(frontend_url)
+        allowed_origins.append(frontend_url)
 
     app.add_middleware(
         CORSMiddleware,
@@ -67,7 +67,10 @@ def create_app() -> FastAPI:
     _ensure_local_spreadsheet()
 
     Base.metadata.create_all(bind=engine)
-    init_ocr_reader()
+    # Optional preload only when explicitly enabled.
+    # Default behavior is lazy initialization on first OCR request to reduce startup memory.
+    if os.getenv("OCR_PRELOAD", "").strip().lower() in {"1", "true", "yes"}:
+        init_ocr_reader()
 
     app.include_router(api_router, prefix=settings.API_PREFIX)
     return app
