@@ -47,7 +47,9 @@ class QualityMetrics(BaseModel):
 class ValidationIssue(BaseModel):
     type: Literal[
         "BADGE_OVERLAP",
+        "AUTHOR_NAME_CONFLICT",
         "SAFE_MARGIN_VIOLATION",
+        "BACK_COVER_ALIGNMENT",
         "TYPOGRAPHY_CONFLICT",
         "LOW_OCR_CONFIDENCE",
         "BORDERLINE_SPACING",
@@ -214,7 +216,7 @@ class BenchmarkSampleResult(BaseModel):
     confidence: float
     processing_ms: int
     issue_count: int = 0
-    overlap_severity: Literal["PASS", "LOW", "MEDIUM", "HIGH"] = "PASS"
+    overlap_severity: Literal["PASS", "LOW", "MEDIUM", "HIGH", "CRITICAL"] = "PASS"
     latency_ms: int = 0
     badge_overlap_detected: bool
     expected_badge_overlap: bool

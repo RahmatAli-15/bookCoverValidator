@@ -6,7 +6,7 @@ Hello Publishing Team,
 Your cover requires revision before approval.
 
 Validation Result: REVIEW_NEEDED
-Publishing Readiness Score: 58/100
+Publishing Readiness Score: 57/100
 
 Detected Issues:
 - Text-like pattern detected in reserved badge area; manual review required. (severity: HIGH)

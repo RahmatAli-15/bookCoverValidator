@@ -1,18 +1,18 @@
 {
-  "status": "pending",
-  "message": "Airtable integration not configured.",
-  "record_id": null,
+  "status": "synced",
+  "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+  "record_id": "LOCAL-9789889652753-20260527085222",
   "fields": {
     "ISBN": "9789889652753",
     "filename": "9789889652753_text.png",
     "validation_status": "PASS",
-    "confidence_score": 0.8424,
+    "confidence_score": 0.8375,
     "readiness_score": 89,
     "issue_count": 0,
     "issue_severity": "NONE",
     "correction_instructions": "No corrections required.",
-    "processing_timestamp": "2026-05-26T16:40:18.222750+00:00",
-    "annotation_image_path": "storage\\annotations\\job_97_20260526164018128767.png",
-    "revision_history": "job_97_latest"
+    "processing_timestamp": "2026-05-27T08:52:22.876145+00:00",
+    "annotation_image_path": "storage\\annotations\\job_135_20260527085222772580.png",
+    "revision_history": "job_135_latest"
   }
 }

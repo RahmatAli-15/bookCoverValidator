@@ -1,15 +1,20 @@
 # Python
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
 .venv/
 venv/
 backend/venv/
+.pytest_cache/
+.mypy_cache/
 
 # Frontend
 node_modules/
 frontend/node_modules/
 dist/
 frontend/dist/
+.vite/
 
 # Environment
 .env
@@ -19,16 +24,35 @@ frontend/dist/
 .DS_Store
 Thumbs.db
 
-# Storage artifacts
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Databases / local runtime state
+*.db
+*.sqlite
+backend/*.db
+book_cover_validator.db
+
+# Runtime-generated storage artifacts
 storage/uploads/*
-storage/processed/*
+storage/processed/ocr_results/*
+storage/processed/reports/*
+storage/processed/notifications/*
 storage/annotations/*
+
+# Keep folder structure and benchmark evidence
 !storage/uploads/.gitkeep
 !storage/processed/.gitkeep
-!storage/processed/ocr_results/
-!storage/processed/ocr_results/.gitkeep
-!storage/processed/reports/
-!storage/processed/reports/.gitkeep
-!storage/processed/notifications/
-!storage/processed/notifications/.gitkeep
+!storage/processed/benchmarks/
+!storage/processed/benchmarks/latest_benchmark.json
+!storage/processed/benchmarks/.gitkeep
 !storage/annotations/.gitkeep
+
+# Optional local integration outputs
+backend/storage/airtable_records/*
+backend/storage/email_previews/*
+!backend/storage/airtable_records/.gitkeep
+!backend/storage/email_previews/.gitkeep

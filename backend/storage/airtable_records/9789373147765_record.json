@@ -1,7 +1,7 @@
 {
-  "status": "pending",
-  "message": "Airtable integration not configured.",
-  "record_id": null,
+  "status": "synced",
+  "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+  "record_id": "LOCAL-9789373147765-20260527084952",
   "fields": {
     "ISBN": "9789373147765",
     "filename": "9789373147765_text.png",
@@ -11,8 +11,8 @@
     "issue_count": 1,
     "issue_severity": "HIGH",
     "correction_instructions": "- Reposition nearby text to remove ambiguous overlap risk.",
-    "processing_timestamp": "2026-05-26T16:37:52.374326+00:00",
-    "annotation_image_path": "storage\\annotations\\job_88_20260526163752278383.png",
-    "revision_history": "job_88_latest"
+    "processing_timestamp": "2026-05-27T08:49:52.326638+00:00",
+    "annotation_image_path": "storage\\annotations\\job_124_20260527084952236985.png",
+    "revision_history": "job_124_latest"
   }
 }

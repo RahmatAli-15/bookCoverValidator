@@ -48,7 +48,9 @@ def compute_publishing_readiness(ocr_conf: float, overlap_safety: float, quality
 def suggested_correction(issue_type: str) -> str:
     mapping = {
         "BADGE_OVERLAP": "Move author name above reserved Emily Dickinson Award area.",
+        "AUTHOR_NAME_CONFLICT": "Reposition author name upward and keep it clear of badge and side safe margins.",
         "SAFE_MARGIN_VIOLATION": "Increase border spacing to keep typography inside safe margin limits.",
+        "BACK_COVER_ALIGNMENT": "Align back-cover body text to a consistent left or center axis.",
         "TYPOGRAPHY_CONFLICT": "Increase spacing between subtitle and badge zone.",
         "BORDERLINE_SPACING": "Increase margin spacing slightly for safer print tolerance.",
         "LOW_OCR_CONFIDENCE": "Improve image clarity and text contrast before resubmission.",

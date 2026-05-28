@@ -42,6 +42,7 @@ export default function BookDetailsPage() {
   const [job, setJob] = useState(location.state?.job || null);
   const [loading, setLoading] = useState(!location.state?.job);
   const [error, setError] = useState("");
+  const [annotationMissing, setAnnotationMissing] = useState(false);
   const decodedFilename = decodeURIComponent(filenameParam || "");
 
   useEffect(() => {
@@ -72,6 +73,10 @@ export default function BookDetailsPage() {
       active = false;
     };
   }, [decodedFilename, job]);
+
+  useEffect(() => {
+    setAnnotationMissing(false);
+  }, [job?.job_id]);
 
   const sourceUrl = useMemo(() => (job?.filename ? getDatasetFileUrl(job.filename) : ""), [job]);
   const annotatedUrl = useMemo(() => (job?.job_id ? getAnnotationImageUrl(job.job_id) : ""), [job]);
@@ -120,8 +125,8 @@ export default function BookDetailsPage() {
               </div>
               <div className="rounded-xl border border-slate-200 p-2">
                 <p className="mb-2 text-sm font-semibold text-slate-700">Annotated Preview</p>
-                {annotatedUrl ? (
-                  <img src={annotatedUrl} alt="Annotated cover" className="max-h-[58vh] w-full rounded object-contain" />
+                {annotatedUrl && !annotationMissing ? (
+                  <img src={annotatedUrl} alt="Annotated cover" className="max-h-[58vh] w-full rounded object-contain" onError={() => setAnnotationMissing(true)} />
                 ) : (
                   <p className="text-sm text-slate-500">Annotation preview not available.</p>
                 )}

@@ -53,7 +53,42 @@ def _read_metadata(bucket: str) -> list[_SampleMeta]:
     return items
 
 
+def _infer_expected_from_filename(filename: str) -> tuple[str, bool]:
+    lower = filename.lower()
+    if "_pass" in lower or "_fixed" in lower or "_fixe" in lower:
+        return "PASS", False
+    if "_bad" in lower:
+        return "REVIEW_NEEDED", True
+    return "BORDERLINE", True
+
+
+def _read_fallback_samples() -> list[_SampleMeta]:
+    sample_dir = settings.project_root / "frontend" / "src" / "data" / "sample-covers"
+    if not sample_dir.exists():
+        return []
+
+    items: list[_SampleMeta] = []
+    for path in sorted(sample_dir.glob("*")):
+        if not path.is_file() or path.suffix.lower() not in {".png", ".pdf"}:
+            continue
+        expected_status, expected_overlap = _infer_expected_from_filename(path.name)
+        items.append(
+            _SampleMeta(
+                filename=path.name,
+                expected_status=expected_status,
+                expected_badge_overlap=expected_overlap,
+                source_bucket="fallback",
+            )
+        )
+    return items
+
+
 def _resolve_sample_file(sample: _SampleMeta) -> Path:
+    if sample.source_bucket == "fallback":
+        fallback = settings.project_root / "frontend" / "src" / "data" / "sample-covers" / sample.filename
+        if fallback.exists():
+            return fallback
+
     direct_sample = settings.test_samples_dir / sample.source_bucket / sample.filename
     if direct_sample.exists():
         return direct_sample
@@ -79,7 +114,8 @@ def _resolve_sample_file(sample: _SampleMeta) -> Path:
 
 def _has_badge_overlap(workflow_payload: dict) -> bool:
     issues = workflow_payload.get("validation", {}).get("issues", [])
-    return any(issue.get("type") == "BADGE_OVERLAP" for issue in issues)
+    critical_types = {"BADGE_OVERLAP", "AUTHOR_NAME_CONFLICT", "TYPOGRAPHY_CONFLICT", "UNCERTAIN_OVERLAP"}
+    return any(issue.get("type") in critical_types for issue in issues)
 
 
 def _max_overlap_severity(workflow_payload: dict) -> str:
@@ -201,6 +237,8 @@ def _export_result(payload: dict) -> str:
 def run_benchmark(db: Session) -> BenchmarkResultResponse:
     samples_meta = _read_metadata("pass") + _read_metadata("review_needed") + _read_metadata("borderline")
     if not samples_meta:
+        samples_meta = _read_fallback_samples()
+    if not samples_meta:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No benchmark metadata found.")
 
     sample_results: list[BenchmarkSampleResult] = []
@@ -208,9 +246,11 @@ def run_benchmark(db: Session) -> BenchmarkResultResponse:
         source_path = _resolve_sample_file(sample)
         ext = source_path.suffix.lower()
         content_type = "application/pdf" if ext == ".pdf" else "image/png"
+        isbn_match = sample.filename.split("_")[0]
+        normalized_name = f"{isbn_match}_text{ext}" if isbn_match.isdigit() and len(isbn_match) == 13 else sample.filename
         with source_path.open("rb") as fp:
             upload = UploadFile(
-                filename=sample.filename,
+                filename=normalized_name,
                 file=fp,
                 headers=Headers({"content-type": content_type}),
             )

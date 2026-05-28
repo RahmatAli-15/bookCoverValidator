@@ -13,6 +13,7 @@ from app.core.config import settings
 from app.models.cover_job import CoverJob
 from app.schemas.cover import ComplianceCheck, TimingMetrics, ValidationConfidence, ValidationIssue
 from app.services.analysis_service import suggested_correction
+from app.services.author_metadata_service import get_author_metadata
 from app.utils.image_processing import ImageProcessingError, PDFProcessingError, load_pdf_first_page_as_bgr, load_png_as_bgr
 
 Rect = tuple[float, float, float, float]
@@ -71,6 +72,12 @@ def _intersection_ratio(a: Rect, b: Rect) -> float:
     inter = _intersection_area(a, b)
     area_a = max((a[2] - a[0]) * (a[3] - a[1]), 1.0)
     return inter / area_a
+
+
+def _intersection_ratio_to_zone(a: Rect, zone: Rect) -> float:
+    inter = _intersection_area(a, zone)
+    zone_area = max((zone[2] - zone[0]) * (zone[3] - zone[1]), 1.0)
+    return inter / zone_area
 
 
 def _overlap_severity(overlap_percentage: float) -> tuple[str, str]:
@@ -152,7 +159,8 @@ def _detect_visual_text_in_badge_zone(image, badge_zone: Rect) -> tuple[bool, fl
     roi_area = float(max(roi.shape[0] * roi.shape[1], 1))
     density = text_area / roi_area
     certainty = min(1.0, (density * 36.0) + (text_like * 0.1))
-    found = text_like >= 2 and density > 0.002
+    # Require stronger text evidence to reduce tiny-noise false positives.
+    found = text_like >= 3 and density > 0.0035 and best[4] >= 120.0
 
     if best[4] > 0:
         bx, by, bw, bh, _ = best
@@ -161,6 +169,90 @@ def _detect_visual_text_in_badge_zone(image, badge_zone: Rect) -> tuple[bool, fl
         bbox = [float(x1), float(y1), float(x2), float(y2)]
 
     return found, round(certainty, 4), bbox
+
+
+def _normalize_text(value: str) -> str:
+    return "".join(ch.lower() if ch.isalnum() else " " for ch in value).strip()
+
+
+def _tokenize(value: str) -> list[str]:
+    return [t for t in _normalize_text(value).split() if t]
+
+
+def _union_rect(rects: list[Rect]) -> Rect:
+    x1 = min(r[0] for r in rects)
+    y1 = min(r[1] for r in rects)
+    x2 = max(r[2] for r in rects)
+    y2 = max(r[3] for r in rects)
+    return (x1, y1, x2, y2)
+
+
+def _match_author_bbox(blocks: list[dict], author_name: str) -> tuple[Rect | None, float]:
+    author_tokens = _tokenize(author_name)
+    if not author_tokens:
+        return None, 0.0
+
+    matched_rects: list[Rect] = []
+    matched = 0
+    for block in blocks:
+        block_text = str(block.get("text", "")).strip()
+        bbox = [float(v) for v in block.get("bbox", [0, 0, 0, 0])]
+        rect: Rect = (bbox[0], bbox[1], bbox[2], bbox[3])
+        block_tokens = set(_tokenize(block_text))
+        if not block_tokens:
+            continue
+
+        # Match full token or clear prefix/suffix fragments from OCR splits.
+        token_hit = 0
+        for t in author_tokens:
+            if t in block_tokens or any(bt.startswith(t[:4]) or t.startswith(bt[:4]) for bt in block_tokens if len(bt) >= 4 and len(t) >= 4):
+                token_hit += 1
+        if token_hit > 0:
+            matched += token_hit
+            matched_rects.append(rect)
+
+    if not matched_rects:
+        return None, 0.0
+    coverage = min(1.0, matched / max(len(author_tokens), 1))
+    return _union_rect(matched_rects), round(coverage, 4)
+
+
+def _check_back_cover_alignment(blocks: list[dict], width: int, height: int) -> tuple[bool, float]:
+    # Only evaluate likely full-cover spreads / back-cover-heavy layouts.
+    if (width / max(height, 1)) < 0.95:
+        return False, 0.0
+    if len(blocks) < 6:
+        return False, 0.0
+
+    eligible = []
+    for block in blocks:
+        bbox = [float(v) for v in block.get("bbox", [0, 0, 0, 0])]
+        bh = bbox[3] - bbox[1]
+        bw = bbox[2] - bbox[0]
+        if bh < 12 or bw < 40:
+            continue
+        # Dense body-like lines, avoid giant title elements.
+        if bw > (width * 0.78):
+            continue
+        eligible.append(bbox)
+
+    if len(eligible) < 5:
+        return False, 0.0
+
+    lefts = [b[0] for b in eligible]
+    centers = [((b[0] + b[2]) / 2.0) for b in eligible]
+    top_y = min(b[1] for b in eligible)
+    bottom_y = max(b[3] for b in eligible)
+    vertical_span_ratio = (bottom_y - top_y) / max(height, 1)
+    if vertical_span_ratio < 0.28:
+        return False, 0.0
+
+    left_std = float((sum((x - (sum(lefts) / len(lefts))) ** 2 for x in lefts) / len(lefts)) ** 0.5)
+    center_std = float((sum((x - (sum(centers) / len(centers))) ** 2 for x in centers) / len(centers)) ** 0.5)
+    misalign_px = min(left_std, center_std)
+    misaligned = misalign_px > (width * 0.055)
+    score = min(1.0, misalign_px / max(width * 0.12, 1.0))
+    return misaligned, round(score, 4)
 
 
 def _build_issue(issue_type: str, severity: str, text: str, bbox: list[float], message: str, overlap_certainty: float, overlap_percentage: float, badge_zone: Rect) -> ValidationIssue:
@@ -204,8 +296,10 @@ def validate_cover_job(db: Session, job_id: int) -> dict:
     ocr_conf = float(ocr_payload.get("confidence_summary", {}).get("average", 0.0))
     overlaps: list[float] = []
     correction_recommendations: list[str] = []
+    author = get_author_metadata(job.isbn)
+    text_blocks = ocr_payload.get("extracted_text_blocks", [])
 
-    for block in ocr_payload.get("extracted_text_blocks", []):
+    for block in text_blocks:
         text = str(block.get("text", "")).strip()
         if len(text) < 3:
             continue
@@ -237,6 +331,45 @@ def validate_cover_job(db: Session, job_id: int) -> dict:
             _, margin_sev = _overlap_severity(margin_overlap * 100.0)
             issues.append(_build_issue("SAFE_MARGIN_VIOLATION", margin_sev, text, bbox, margin_msg, margin_overlap, margin_overlap * 100.0, zones["critical_badge_zone"]))
 
+    author_rect, author_match_conf = _match_author_bbox(text_blocks, author.author_name)
+    if author_rect is not None and author_match_conf >= 0.6:
+        author_overlap = _intersection_ratio(author_rect, zones["critical_badge_zone"])
+        author_margin_overlap = max(_intersection_ratio(author_rect, zones["left_margin"]), _intersection_ratio(author_rect, zones["right_margin"]))
+        if author_overlap > 0 or author_margin_overlap > 0:
+            overlap_pct = max(author_overlap, author_margin_overlap) * 100.0
+            _, sev = _overlap_severity(overlap_pct)
+            msg = "Detected author name conflicts with protected badge/safe margin zone."
+            issue_type = "AUTHOR_NAME_CONFLICT"
+            issues.append(
+                _build_issue(
+                    issue_type,
+                    sev,
+                    author.author_name,
+                    [author_rect[0], author_rect[1], author_rect[2], author_rect[3]],
+                    msg,
+                    max(author_overlap, author_margin_overlap),
+                    overlap_pct,
+                    zones["critical_badge_zone"],
+                )
+            )
+            overlaps.append(max(author_overlap, author_margin_overlap))
+            correction_recommendations.append(_estimate_shift_px([author_rect[0], author_rect[1], author_rect[2], author_rect[3]], zones["critical_badge_zone"]))
+
+    back_cover_misaligned, back_cover_misalignment = _check_back_cover_alignment(text_blocks, w, h)
+    if back_cover_misaligned and back_cover_misalignment >= 0.65:
+        issues.append(
+            _build_issue(
+                "BACK_COVER_ALIGNMENT",
+                "LOW",
+                "Back cover body text",
+                [0.0, 0.0, float(w), float(h)],
+                "Back-cover text blocks show inconsistent alignment. Normalize left or center alignment.",
+                back_cover_misalignment,
+                back_cover_misalignment * 100.0,
+                zones["critical_badge_zone"],
+            )
+        )
+
     if ocr_conf < 0.70:
         issues.append(_build_issue("LOW_OCR_CONFIDENCE", "MEDIUM", "", [0, 0, 0, 0], "OCR confidence too low for reliable validation", max(0.0, 0.7 - ocr_conf), 0.0, zones["critical_badge_zone"]))
 
@@ -250,25 +383,33 @@ def validate_cover_job(db: Session, job_id: int) -> dict:
 
     visual_overlap_found, visual_certainty, visual_bbox = _detect_visual_text_in_badge_zone(image, zones["critical_badge_zone"])
     if visual_overlap_found and not any(i.type in {"BADGE_OVERLAP", "TYPOGRAPHY_CONFLICT"} for i in issues):
-        overlaps.append(visual_certainty)
-        issues.append(
-            _build_issue(
-                "UNCERTAIN_OVERLAP",
-                "HIGH",
-                "Undetected typography in protected badge zone",
-                visual_bbox,
-                "Text-like pattern detected in reserved badge area; manual review required.",
-                visual_certainty,
-                min(100.0, visual_certainty * 100.0),
-                zones["critical_badge_zone"],
+        visual_rect: Rect = (visual_bbox[0], visual_bbox[1], visual_bbox[2], visual_bbox[3])
+        zone_coverage_ratio = _intersection_ratio_to_zone(visual_rect, zones["critical_badge_zone"])
+        zone_coverage_pct = zone_coverage_ratio * 100.0
+        # Ignore tiny detections that are very likely decorative/noise artifacts.
+        if zone_coverage_pct < 3.0 or visual_certainty < 0.45:
+            visual_overlap_found = False
+        else:
+            overlaps.append(visual_certainty)
+            _, visual_sev = _overlap_severity(zone_coverage_pct)
+            issues.append(
+                _build_issue(
+                    "UNCERTAIN_OVERLAP",
+                    visual_sev,
+                    "Undetected typography in protected badge zone",
+                    visual_bbox,
+                    "Text-like pattern detected in reserved badge area; manual review required.",
+                    visual_certainty,
+                    zone_coverage_pct,
+                    zones["critical_badge_zone"],
+                )
             )
-        )
-        correction_recommendations.append(_estimate_shift_px(visual_bbox, zones["critical_badge_zone"]))
+            correction_recommendations.append(_estimate_shift_px(visual_bbox, zones["critical_badge_zone"]))
 
     has_major_typography_conflict = any(i.type == "TYPOGRAPHY_CONFLICT" and i.severity in {"HIGH", "CRITICAL"} for i in issues)
     avg_overlap = round(sum(overlaps) / len(overlaps), 4) if overlaps else 0.0
     overall_conf = round(max(0.0, min(1.0, (ocr_conf * 0.7) + ((1 - avg_overlap) * 0.3))), 4)
-    blocking_issue_types = {"BADGE_OVERLAP", "TYPOGRAPHY_CONFLICT", "SAFE_MARGIN_VIOLATION", "LOW_OCR_CONFIDENCE", "UNCERTAIN_OVERLAP"}
+    blocking_issue_types = {"BADGE_OVERLAP", "AUTHOR_NAME_CONFLICT", "TYPOGRAPHY_CONFLICT", "SAFE_MARGIN_VIOLATION", "LOW_OCR_CONFIDENCE", "UNCERTAIN_OVERLAP"}
     has_blocking_issue = any(i.type in blocking_issue_types for i in issues)
     status_value = "REVIEW_NEEDED" if has_blocking_issue or has_major_typography_conflict else "PASS"
     if any(i.severity in {"HIGH", "CRITICAL"} for i in issues):
@@ -276,7 +417,7 @@ def validate_cover_job(db: Session, job_id: int) -> dict:
 
     confidence = ValidationConfidence(ocr_confidence=round(ocr_conf, 4), overlap_certainty=avg_overlap, overall_validation_confidence=overall_conf)
 
-    has_badge_conflict = any(i.type in {"BADGE_OVERLAP", "TYPOGRAPHY_CONFLICT"} for i in issues)
+    has_badge_conflict = any(i.type in {"BADGE_OVERLAP", "AUTHOR_NAME_CONFLICT", "TYPOGRAPHY_CONFLICT"} for i in issues)
     has_margin_conflict = any(i.type == "SAFE_MARGIN_VIOLATION" for i in issues)
     ocr_readable = ocr_conf >= 0.70 and not any(i.type == "LOW_OCR_CONFIDENCE" for i in issues)
     layout_clear = not any(i.type in {"TYPOGRAPHY_CONFLICT", "UNCERTAIN_OVERLAP"} for i in issues)

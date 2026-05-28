@@ -1,13 +1,14 @@
-﻿# bookCoverValidator
+# Book Cover Validator
 
-Book cover QA platform with OCR validation, review workflow, and local Airtable-style spreadsheet sync.
+Automated publishing QA system for validating book cover layout issues, with priority on detecting text overlap in the reserved **"21st Century Emily Dickinson Award"** badge zone.
 
-## Features
-- Upload cover files and run automated QA checks
-- OCR + layout validation pipeline
-- Review dashboard and detailed book reports
-- Customer Email and Airtable Sync pages
-- Local spreadsheet sync (`storage/processed/airtable_local_sheet.csv`)
+## What Recruiters Can Run Directly
+- Upload `ISBN_text.pdf` or `ISBN_text.png`
+- Run OCR + safe-zone checks + badge-overlap detection
+- Get `PASS` / `REVIEW_NEEDED` with confidence score
+- Generate annotated output and correction guidance
+- Generate Airtable-style sync payload + email preview
+- Run benchmark and inspect `latest_benchmark.json`
 
 ## Project Structure
 ```text
@@ -15,47 +16,57 @@ book-cover-validator/
 |- backend/
 |- frontend/
 |- storage/
-|- docs/
+|  |- processed/benchmarks/latest_benchmark.json
 |- README.md
 ```
 
-## Tech Stack
-- Frontend: React, Vite, TailwindCSS
-- Backend: FastAPI, Python 3.11
-- Storage: local filesystem directories under `storage/`
+## Quick Start (Windows PowerShell)
 
-## Local Run
-
-### Backend
-```bash
+### 1) Backend
+```powershell
 cd backend
 python -m venv venv
-venv\\Scripts\\activate
+.\venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### Frontend
-```bash
+### 2) Frontend
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-Frontend default: `http://localhost:5173`
-Backend default: `http://localhost:8000`
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8000/api`
 
-## Environment Variables (Backend)
-- `FRONTEND_URL` (for production CORS)
-- `AIRTABLE_API_KEY` (optional)
-- `AIRTABLE_BASE_ID` (optional)
-- `AIRTABLE_TABLE_NAME` (optional)
+## Core Assignment Mapping
+- Input format validation (`ISBN_text.ext`): implemented
+- Critical badge overlap detection: implemented
+- Author-name conflict detection: implemented
+- Safe margin checks: implemented
+- Back-cover alignment validator: implemented
+- Image quality checks: implemented
+- Airtable integration (API or local fallback): implemented
+- Email preview generation: implemented
 
-If Airtable env vars are not configured, sync data is stored locally in:
+## Benchmark
+Run:
+```powershell
+cd ..
+$env:PYTHONPATH='backend'
+python -c "from app.core.database import Base, engine; from app.models.cover_job import CoverJob; Base.metadata.create_all(bind=engine); from app.core.database import SessionLocal; from app.services.benchmark_service import run_benchmark; db=SessionLocal(); print(run_benchmark(db).model_dump()); db.close()"
+```
+
+Latest benchmark artifact:
+- `storage/processed/benchmarks/latest_benchmark.json`
+
+## Optional Environment Variables
+- `FRONTEND_URL`
+- `AIRTABLE_API_KEY`
+- `AIRTABLE_BASE_ID`
+- `AIRTABLE_TABLE_NAME`
+
+If Airtable credentials are missing, records are saved locally in:
 - `storage/processed/airtable_local_sheet.csv`
-
-## Deployment (Render)
-- Backend: Render Web Service (`backend` root)
-- Frontend: Render Static Site (`frontend` root)
-- Set frontend env `VITE_API_BASE_URL` to your backend `/api` URL
-- Set backend env `FRONTEND_URL` to your frontend URL

@@ -1,0 +1,620 @@
+{
+  "processed_files": {},
+  "pending_files": [],
+  "jobs": [
+    {
+      "filename": "9789373145068_tainted_emotion_bad.png",
+      "isbn": "9789373145068",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "REVIEW_NEEDED",
+      "confidence_score": 0.3657,
+      "readiness_score": 60,
+      "issues": [
+        {
+          "type": "TYPOGRAPHY_CONFLICT",
+          "severity": "CRITICAL",
+          "text": "can express",
+          "bbox": [
+            656.0,
+            687.0,
+            809.0,
+            713.0
+          ],
+          "message": "Typography enters protected badge zone.",
+          "overlap_certainty": 1.0,
+          "overlap_percentage": 100.0,
+          "overlap_severity": "CRITICAL",
+          "conflicting_text": "can express",
+          "badge_zone_coordinates": [
+            0.0,
+            679.0555555555555,
+            924.0,
+            719.0
+          ],
+          "suggested_correction": "Increase spacing between subtitle and badge zone.",
+          "issue_confidence": 1.0
+        }
+      ],
+      "annotation_path": "storage\\annotations\\job_118_20260527084830957992.png",
+      "executive_summary": "Requires Manual Review. Detected 1 issue(s); overall validation confidence 36.6%.",
+      "operational_guidance": [
+        "Move subtitle upward to restore award badge visibility."
+      ],
+      "correction_recommendation": [
+        "Recommended adjustment: move text 49-59px upward."
+      ],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789373145068-20260527084831",
+        "fields": {
+          "ISBN": "9789373145068",
+          "filename": "9789373145068_text.png",
+          "validation_status": "REVIEW_NEEDED",
+          "confidence_score": 0.3657,
+          "readiness_score": 60,
+          "issue_count": 1,
+          "issue_severity": "LOW",
+          "correction_instructions": "- Increase spacing between subtitle and badge zone.",
+          "processing_timestamp": "2026-05-27T08:48:31.053828+00:00",
+          "annotation_image_path": "storage\\annotations\\job_118_20260527084830957992.png",
+          "revision_history": "job_118_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: REVIEW_NEEDED",
+        "body": "Hello Publishing Team,\n\nYour cover requires revision before approval.\n\nValidation Result: REVIEW_NEEDED\nPublishing Readiness Score: 60/100\n\nDetected Issues:\n- Typography enters protected badge zone. (severity: CRITICAL)\n\nCorrection Guidance:\n- Increase spacing between subtitle and badge zone.\n\nNext Steps:\nApply corrections and re-upload using the same ISBN filename convention.\n\nRegards,\nPublishing QA Automation",
+        "status": "REVIEW_NEEDED"
+      },
+      "job_id": 118,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 14479
+    },
+    {
+      "filename": "9789373147499_shabd_bad.png",
+      "isbn": "9789373147499",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "REVIEW_NEEDED",
+      "confidence_score": 0.3473,
+      "readiness_score": 57,
+      "issues": [
+        {
+          "type": "UNCERTAIN_OVERLAP",
+          "severity": "HIGH",
+          "text": "Undetected typography in protected badge zone",
+          "bbox": [
+            521.0,
+            694.0,
+            549.0,
+            707.0
+          ],
+          "message": "Text-like pattern detected in reserved badge area; manual review required.",
+          "overlap_certainty": 1.0,
+          "overlap_percentage": 100.0,
+          "overlap_severity": "CRITICAL",
+          "conflicting_text": "Undetected typography in protected badge zone",
+          "badge_zone_coordinates": [
+            0.0,
+            694.1666666666666,
+            963.0,
+            735.0
+          ],
+          "suggested_correction": "Reposition nearby text to remove ambiguous overlap risk.",
+          "issue_confidence": 1.0
+        }
+      ],
+      "annotation_path": "storage\\annotations\\job_120_20260527084848692508.png",
+      "executive_summary": "Requires Manual Review. Detected 1 issue(s); overall validation confidence 34.7%.",
+      "operational_guidance": [
+        "Layout appears compliant with publishing production QA rules."
+      ],
+      "correction_recommendation": [
+        "Recommended adjustment: move text 28-38px upward."
+      ],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789373147499-20260527084848",
+        "fields": {
+          "ISBN": "9789373147499",
+          "filename": "9789373147499_text.png",
+          "validation_status": "REVIEW_NEEDED",
+          "confidence_score": 0.3473,
+          "readiness_score": 57,
+          "issue_count": 1,
+          "issue_severity": "HIGH",
+          "correction_instructions": "- Reposition nearby text to remove ambiguous overlap risk.",
+          "processing_timestamp": "2026-05-27T08:48:48.815914+00:00",
+          "annotation_image_path": "storage\\annotations\\job_120_20260527084848692508.png",
+          "revision_history": "job_120_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: REVIEW_NEEDED",
+        "body": "Hello Publishing Team,\n\nYour cover requires revision before approval.\n\nValidation Result: REVIEW_NEEDED\nPublishing Readiness Score: 57/100\n\nDetected Issues:\n- Text-like pattern detected in reserved badge area; manual review required. (severity: HIGH)\n\nCorrection Guidance:\n- Reposition nearby text to remove ambiguous overlap risk.\n\nNext Steps:\nApply corrections and re-upload using the same ISBN filename convention.\n\nRegards,\nPublishing QA Automation",
+        "status": "REVIEW_NEEDED"
+      },
+      "job_id": 120,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 17561
+    },
+    {
+      "filename": "9789373147765_innermirror_bad.png",
+      "isbn": "9789373147765",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "REVIEW_NEEDED",
+      "confidence_score": 0.3835,
+      "readiness_score": 58,
+      "issues": [
+        {
+          "type": "UNCERTAIN_OVERLAP",
+          "severity": "HIGH",
+          "text": "Undetected typography in protected badge zone",
+          "bbox": [
+            792.0,
+            699.0,
+            910.0,
+            718.0
+          ],
+          "message": "Text-like pattern detected in reserved badge area; manual review required.",
+          "overlap_certainty": 1.0,
+          "overlap_percentage": 100.0,
+          "overlap_severity": "CRITICAL",
+          "conflicting_text": "Undetected typography in protected badge zone",
+          "badge_zone_coordinates": [
+            0.0,
+            684.7222222222222,
+            928.0,
+            725.0
+          ],
+          "suggested_correction": "Reposition nearby text to remove ambiguous overlap risk.",
+          "issue_confidence": 1.0
+        }
+      ],
+      "annotation_path": "storage\\annotations\\job_123_20260527084935083629.png",
+      "executive_summary": "Requires Manual Review. Detected 1 issue(s); overall validation confidence 38.4%.",
+      "operational_guidance": [
+        "Layout appears compliant with publishing production QA rules."
+      ],
+      "correction_recommendation": [
+        "Recommended adjustment: move text 49-59px upward."
+      ],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789373147765-20260527084935",
+        "fields": {
+          "ISBN": "9789373147765",
+          "filename": "9789373147765_text.png",
+          "validation_status": "REVIEW_NEEDED",
+          "confidence_score": 0.3835,
+          "readiness_score": 58,
+          "issue_count": 1,
+          "issue_severity": "HIGH",
+          "correction_instructions": "- Reposition nearby text to remove ambiguous overlap risk.",
+          "processing_timestamp": "2026-05-27T08:49:35.187201+00:00",
+          "annotation_image_path": "storage\\annotations\\job_123_20260527084935083629.png",
+          "revision_history": "job_123_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: REVIEW_NEEDED",
+        "body": "Hello Publishing Team,\n\nYour cover requires revision before approval.\n\nValidation Result: REVIEW_NEEDED\nPublishing Readiness Score: 58/100\n\nDetected Issues:\n- Text-like pattern detected in reserved badge area; manual review required. (severity: HIGH)\n\nCorrection Guidance:\n- Reposition nearby text to remove ambiguous overlap risk.\n\nNext Steps:\nApply corrections and re-upload using the same ISBN filename convention.\n\nRegards,\nPublishing QA Automation",
+        "status": "REVIEW_NEEDED"
+      },
+      "job_id": 123,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 28290
+    },
+    {
+      "filename": "9789373147765_innermirror_fixe.png",
+      "isbn": "9789373147765",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "REVIEW_NEEDED",
+      "confidence_score": 0.3107,
+      "readiness_score": 56,
+      "issues": [
+        {
+          "type": "UNCERTAIN_OVERLAP",
+          "severity": "HIGH",
+          "text": "Undetected typography in protected badge zone",
+          "bbox": [
+            656.0,
+            698.0,
+            735.0,
+            719.0
+          ],
+          "message": "Text-like pattern detected in reserved badge area; manual review required.",
+          "overlap_certainty": 1.0,
+          "overlap_percentage": 100.0,
+          "overlap_severity": "CRITICAL",
+          "conflicting_text": "Undetected typography in protected badge zone",
+          "badge_zone_coordinates": [
+            0.0,
+            682.8333333333334,
+            937.0,
+            723.0
+          ],
+          "suggested_correction": "Reposition nearby text to remove ambiguous overlap risk.",
+          "issue_confidence": 1.0
+        }
+      ],
+      "annotation_path": "storage\\annotations\\job_124_20260527084952236985.png",
+      "executive_summary": "Requires Manual Review. Detected 1 issue(s); overall validation confidence 31.1%.",
+      "operational_guidance": [
+        "Layout appears compliant with publishing production QA rules."
+      ],
+      "correction_recommendation": [
+        "Recommended adjustment: move text 52-62px upward."
+      ],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789373147765-20260527084952",
+        "fields": {
+          "ISBN": "9789373147765",
+          "filename": "9789373147765_text.png",
+          "validation_status": "REVIEW_NEEDED",
+          "confidence_score": 0.3107,
+          "readiness_score": 56,
+          "issue_count": 1,
+          "issue_severity": "HIGH",
+          "correction_instructions": "- Reposition nearby text to remove ambiguous overlap risk.",
+          "processing_timestamp": "2026-05-27T08:49:52.326638+00:00",
+          "annotation_image_path": "storage\\annotations\\job_124_20260527084952236985.png",
+          "revision_history": "job_124_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: REVIEW_NEEDED",
+        "body": "Hello Publishing Team,\n\nYour cover requires revision before approval.\n\nValidation Result: REVIEW_NEEDED\nPublishing Readiness Score: 56/100\n\nDetected Issues:\n- Text-like pattern detected in reserved badge area; manual review required. (severity: HIGH)\n\nCorrection Guidance:\n- Reposition nearby text to remove ambiguous overlap risk.\n\nNext Steps:\nApply corrections and re-upload using the same ISBN filename convention.\n\nRegards,\nPublishing QA Automation",
+        "status": "REVIEW_NEEDED"
+      },
+      "job_id": 124,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 15813
+    },
+    {
+      "filename": "9789378652616_shabd_pass.png",
+      "isbn": "9789378652616",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "REVIEW_NEEDED",
+      "confidence_score": 0.3533,
+      "readiness_score": 57,
+      "issues": [
+        {
+          "type": "UNCERTAIN_OVERLAP",
+          "severity": "HIGH",
+          "text": "Undetected typography in protected badge zone",
+          "bbox": [
+            474.0,
+            704.0,
+            509.0,
+            717.0
+          ],
+          "message": "Text-like pattern detected in reserved badge area; manual review required.",
+          "overlap_certainty": 1.0,
+          "overlap_percentage": 100.0,
+          "overlap_severity": "CRITICAL",
+          "conflicting_text": "Undetected typography in protected badge zone",
+          "badge_zone_coordinates": [
+            0.0,
+            683.7777777777778,
+            911.0,
+            724.0
+          ],
+          "suggested_correction": "Reposition nearby text to remove ambiguous overlap risk.",
+          "issue_confidence": 1.0
+        }
+      ],
+      "annotation_path": "storage\\annotations\\job_125_20260527085004459017.png",
+      "executive_summary": "Requires Manual Review. Detected 1 issue(s); overall validation confidence 35.3%.",
+      "operational_guidance": [
+        "Layout appears compliant with publishing production QA rules."
+      ],
+      "correction_recommendation": [
+        "Recommended adjustment: move text 49-59px upward."
+      ],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789378652616-20260527085004",
+        "fields": {
+          "ISBN": "9789378652616",
+          "filename": "9789378652616_text.png",
+          "validation_status": "REVIEW_NEEDED",
+          "confidence_score": 0.3533,
+          "readiness_score": 57,
+          "issue_count": 1,
+          "issue_severity": "HIGH",
+          "correction_instructions": "- Reposition nearby text to remove ambiguous overlap risk.",
+          "processing_timestamp": "2026-05-27T08:50:04.561039+00:00",
+          "annotation_image_path": "storage\\annotations\\job_125_20260527085004459017.png",
+          "revision_history": "job_125_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: REVIEW_NEEDED",
+        "body": "Hello Publishing Team,\n\nYour cover requires revision before approval.\n\nValidation Result: REVIEW_NEEDED\nPublishing Readiness Score: 57/100\n\nDetected Issues:\n- Text-like pattern detected in reserved badge area; manual review required. (severity: HIGH)\n\nCorrection Guidance:\n- Reposition nearby text to remove ambiguous overlap risk.\n\nNext Steps:\nApply corrections and re-upload using the same ISBN filename convention.\n\nRegards,\nPublishing QA Automation",
+        "status": "REVIEW_NEEDED"
+      },
+      "job_id": 125,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 10038
+    },
+    {
+      "filename": "9789889652364_echoes_fixed_pass.png",
+      "isbn": "9789889652364",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "PASS",
+      "confidence_score": 0.874,
+      "readiness_score": 90,
+      "issues": [],
+      "annotation_path": "storage\\annotations\\job_128_20260527085048727507.png",
+      "executive_summary": "Production Ready. Detected 0 issue(s); overall validation confidence 87.4%.",
+      "operational_guidance": [
+        "Layout appears compliant with publishing production QA rules."
+      ],
+      "correction_recommendation": [],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789889652364-20260527085048",
+        "fields": {
+          "ISBN": "9789889652364",
+          "filename": "9789889652364_text.png",
+          "validation_status": "PASS",
+          "confidence_score": 0.874,
+          "readiness_score": 90,
+          "issue_count": 0,
+          "issue_severity": "NONE",
+          "correction_instructions": "No corrections required.",
+          "processing_timestamp": "2026-05-27T08:50:48.865633+00:00",
+          "annotation_image_path": "storage\\annotations\\job_128_20260527085048727507.png",
+          "revision_history": "job_128_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: PASS",
+        "body": "Hello Publishing Team,\n\nYour cover successfully passed automated QA validation.\n\nValidation Result: PASS\nPublishing Readiness Score: 90/100\n\nDetected Issues:\n- No issue details available\n\nCorrection Guidance:\n- None\n\nNext Steps:\nProceed to production-ready submission and schedule print proofing.\n\nRegards,\nPublishing QA Automation",
+        "status": "PASS"
+      },
+      "job_id": 128,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 38790
+    },
+    {
+      "filename": "9789889652364_echoes_pass.png",
+      "isbn": "9789889652364",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "REVIEW_NEEDED",
+      "confidence_score": 0.7814,
+      "readiness_score": 83,
+      "issues": [
+        {
+          "type": "TYPOGRAPHY_CONFLICT",
+          "severity": "MEDIUM",
+          "text": "and Marcy",
+          "bbox": [
+            636.0,
+            656.0,
+            762.0,
+            686.0
+          ],
+          "message": "Typography enters protected badge zone.",
+          "overlap_certainty": 0.137,
+          "overlap_percentage": 13.7,
+          "overlap_severity": "MEDIUM",
+          "conflicting_text": "and Marcy",
+          "badge_zone_coordinates": [
+            0.0,
+            681.8888888888889,
+            913.0,
+            722.0
+          ],
+          "suggested_correction": "Increase spacing between subtitle and badge zone.",
+          "issue_confidence": 0.4391
+        }
+      ],
+      "annotation_path": "storage\\annotations\\job_131_20260527085141437288.png",
+      "executive_summary": "Requires Manual Review. Detected 1 issue(s); overall validation confidence 78.1%.",
+      "operational_guidance": [
+        "Move subtitle upward to restore award badge visibility."
+      ],
+      "correction_recommendation": [
+        "Recommended adjustment: move text 20-30px upward."
+      ],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789889652364-20260527085141",
+        "fields": {
+          "ISBN": "9789889652364",
+          "filename": "9789889652364_text.png",
+          "validation_status": "REVIEW_NEEDED",
+          "confidence_score": 0.7814,
+          "readiness_score": 83,
+          "issue_count": 1,
+          "issue_severity": "MEDIUM",
+          "correction_instructions": "- Increase spacing between subtitle and badge zone.",
+          "processing_timestamp": "2026-05-27T08:51:41.644082+00:00",
+          "annotation_image_path": "storage\\annotations\\job_131_20260527085141437288.png",
+          "revision_history": "job_131_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: REVIEW_NEEDED",
+        "body": "Hello Publishing Team,\n\nYour cover requires revision before approval.\n\nValidation Result: REVIEW_NEEDED\nPublishing Readiness Score: 83/100\n\nDetected Issues:\n- Typography enters protected badge zone. (severity: MEDIUM)\n\nCorrection Guidance:\n- Increase spacing between subtitle and badge zone.\n\nNext Steps:\nApply corrections and re-upload using the same ISBN filename convention.\n\nRegards,\nPublishing QA Automation",
+        "status": "REVIEW_NEEDED"
+      },
+      "job_id": 131,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 34476
+    },
+    {
+      "filename": "9789889652753_offline_pass.png",
+      "isbn": "9789889652753",
+      "file_type": "png",
+      "page_count": 1,
+      "status": "PASS",
+      "confidence_score": 0.8375,
+      "readiness_score": 89,
+      "issues": [],
+      "annotation_path": "storage\\annotations\\job_135_20260527085222772580.png",
+      "executive_summary": "Production Ready. Detected 0 issue(s); overall validation confidence 83.8%.",
+      "operational_guidance": [
+        "Layout appears compliant with publishing production QA rules."
+      ],
+      "correction_recommendation": [],
+      "airtable_payload": {
+        "status": "synced",
+        "message": "Saved to local spreadsheet: airtable_local_sheet.csv",
+        "record_id": "LOCAL-9789889652753-20260527085222",
+        "fields": {
+          "ISBN": "9789889652753",
+          "filename": "9789889652753_text.png",
+          "validation_status": "PASS",
+          "confidence_score": 0.8375,
+          "readiness_score": 89,
+          "issue_count": 0,
+          "issue_severity": "NONE",
+          "correction_instructions": "No corrections required.",
+          "processing_timestamp": "2026-05-27T08:52:22.876145+00:00",
+          "annotation_image_path": "storage\\annotations\\job_135_20260527085222772580.png",
+          "revision_history": "job_135_latest"
+        }
+      },
+      "email_preview": {
+        "recipient_name": "Publishing Team",
+        "recipient_email": "publishing-ops@example.com",
+        "subject": "Book Cover QA Result: PASS",
+        "body": "Hello Publishing Team,\n\nYour cover successfully passed automated QA validation.\n\nValidation Result: PASS\nPublishing Readiness Score: 89/100\n\nDetected Issues:\n- No issue details available\n\nCorrection Guidance:\n- None\n\nNext Steps:\nProceed to production-ready submission and schedule print proofing.\n\nRegards,\nPublishing QA Automation",
+        "status": "PASS"
+      },
+      "job_id": 135,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "UPLOADING",
+        "OCR PROCESSING",
+        "SAFE-ZONE VALIDATION",
+        "BADGE OVERLAP ANALYSIS",
+        "QUALITY ANALYSIS",
+        "GENERATING ANNOTATIONS",
+        "GENERATING AIRTABLE RECORD",
+        "GENERATING EMAIL NOTIFICATION",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 28587
+    }
+  ],
+  "last_run": "2026-05-28T05:33:16.028321+00:00",
+  "current_stage": "COMPLETED",
+  "current_file": null,
+  "ruleset_version": "2026-05-26-badge-visual-overlap-v4"
+}

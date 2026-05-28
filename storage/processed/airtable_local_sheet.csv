@@ -1,0 +1,9 @@
+record_id,ISBN,filename,validation_status,confidence_score,readiness_score,issue_count,issue_severity,correction_instructions,processing_timestamp,annotation_image_path,revision_history
+LOCAL-9789373145068-20260528052238,9789373145068,9789373145068_text.png,REVIEW_NEEDED,0.3657,59,2,LOW,"- Increase spacing between subtitle and badge zone.
+- Align back-cover body text to a consistent left or center axis.",2026-05-28T05:22:38.933096+00:00,storage\annotations\job_17_20260528052238867086.png,job_17_latest
+LOCAL-9789373147499-20260528052250,9789373147499,9789373147499_text.png,PASS,0.8473,90,0,NONE,No corrections required.,2026-05-28T05:22:50.223045+00:00,storage\annotations\job_18_20260528052250101908.png,job_18_latest
+LOCAL-9789373147765-20260528052326,9789373147765,9789373147765_text.png,REVIEW_NEEDED,0.5107,58,1,LOW,- Reposition nearby text to remove ambiguous overlap risk.,2026-05-28T05:23:26.547674+00:00,storage\annotations\job_20_20260528052326422994.png,job_20_latest
+LOCAL-9789378652616-20260528052340,9789378652616,9789378652616_text.png,PASS,0.8533,90,0,NONE,No corrections required.,2026-05-28T05:23:40.291181+00:00,storage\annotations\job_21_20260528052340107095.png,job_21_latest
+LOCAL-9789889652364-20260528052422,9789889652364,9789889652364_text.png,REVIEW_NEEDED,0.7728,82,2,MEDIUM,"- Increase spacing between subtitle and badge zone.
+- Align back-cover body text to a consistent left or center axis.",2026-05-28T05:24:22.722806+00:00,storage\annotations\job_23_20260528052422600235.png,job_23_latest
+LOCAL-9789889652753-20260528052436,9789889652753,9789889652753_text.png,PASS,0.8424,89,1,LOW,- Align back-cover body text to a consistent left or center axis.,2026-05-28T05:24:36.696045+00:00,storage\annotations\job_24_20260528052436596264.png,job_24_latest
