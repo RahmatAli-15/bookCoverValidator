@@ -28,6 +28,21 @@ function localSpreadsheetLabel(job) {
   return match?.[1] || "airtable_local_sheet.csv";
 }
 
+function invalidFilenameDiagnostics(fileName = "") {
+  const hasExt = /\.[^.]+$/.test(fileName);
+  const ext = hasExt ? fileName.split(".").pop().toLowerCase() : "";
+  const supportedExt = ["pdf", "png"];
+  const hasSupportedExt = supportedExt.includes(ext);
+  const strictPattern = /^\d{13}_text\.(pdf|png)$/i;
+  const matchesStrict = strictPattern.test(fileName);
+  return {
+    hasExt,
+    ext: ext || "none",
+    hasSupportedExt,
+    matchesStrict,
+  };
+}
+
 function Icon({ path, className = "h-4 w-4" }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
@@ -80,6 +95,8 @@ export default function BookDetailsPage() {
 
   const sourceUrl = useMemo(() => (job?.filename ? getDatasetFileUrl(job.filename) : ""), [job]);
   const annotatedUrl = useMemo(() => (job?.job_id ? getAnnotationImageUrl(job.job_id) : ""), [job]);
+  const isInvalidFilename = String(job?.status || "").toUpperCase() === "INVALID_FILENAME";
+  const filenameChecks = useMemo(() => invalidFilenameDiagnostics(job?.filename || decodedFilename || ""), [job?.filename, decodedFilename]);
 
   return (
     <section className="mx-auto max-w-7xl space-y-5">
@@ -150,6 +167,33 @@ export default function BookDetailsPage() {
               {(!job.operational_guidance || job.operational_guidance.length === 0) && <li>- No guidance generated.</li>}
             </ul>
           </article>
+
+          {isInvalidFilename && (
+            <article className="rounded-2xl border border-amber-200 bg-amber-50 p-4 shadow-sm">
+              <h3 className="text-base font-semibold text-amber-900">Upload Requirement Failure Details</h3>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                <div className="rounded-lg border border-amber-200 bg-white p-3 text-sm text-slate-700">
+                  <p className="font-semibold text-slate-900">Workflow Automation Requirements</p>
+                  <p className="mt-2">1. Trigger Mechanism: Book covers uploaded to designated intake folder.</p>
+                  <p>2. File naming convention: <span className="font-semibold">ISBN_text</span> (example: <span className="font-semibold">1234567890123_text.pdf</span>).</p>
+                  <p>3. Supported formats: <span className="font-semibold">PDF</span> and <span className="font-semibold">PNG</span>.</p>
+                </div>
+                <div className="rounded-lg border border-amber-200 bg-white p-3 text-sm text-slate-700">
+                  <p className="font-semibold text-slate-900">Current File Validation</p>
+                  <p className="mt-2"><span className="font-medium">Detected file:</span> {detailValue(job?.filename, decodedFilename)}</p>
+                  <p><span className="font-medium">Extension found:</span> {filenameChecks.ext.toUpperCase()}</p>
+                  <p><span className="font-medium">Supported extension:</span> {filenameChecks.hasSupportedExt ? "YES" : "NO"}</p>
+                  <p><span className="font-medium">Matches ISBN_text pattern:</span> {filenameChecks.matchesStrict ? "YES" : "NO"}</p>
+                </div>
+              </div>
+              <div className="mt-3 rounded-lg border border-amber-200 bg-white p-3 text-sm text-slate-700">
+                <p className="font-semibold text-slate-900">How To Fix</p>
+                <p className="mt-2">1. Rename the file to `13-digit-ISBN_text`.</p>
+                <p>2. Keep extension as `.png` or `.pdf`.</p>
+                <p>3. Re-upload using a valid name such as `9789378652616_text.png`.</p>
+              </div>
+            </article>
+          )}
 
           <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
             <div className="flex items-center gap-2 text-base font-semibold text-slate-900">

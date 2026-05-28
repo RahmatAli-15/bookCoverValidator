@@ -3,6 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 import { getDatasetFileUrl, getDatasetStatus } from "../services/coverApi";
 
+function fallbackRecipient(job) {
+  if (job?.isbn) return "publishing-ops@example.com";
+  return "intake-validation@bookleaf.example";
+}
+
 export default function CustomerEmailPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -63,7 +68,7 @@ export default function CustomerEmailPage() {
               </div>
               <div className="mt-4 rounded-lg bg-slate-50 p-3 text-xs">
                 <p className="font-semibold text-slate-800">Email Information</p>
-                <p className="mt-1 text-slate-600"><span className="font-medium">To:</span> {job?.email_preview?.recipient_email || "-"}</p>
+                <p className="mt-1 text-slate-600"><span className="font-medium">To:</span> {job?.email_preview?.recipient_email || fallbackRecipient(job)}</p>
                 <p className="text-slate-600"><span className="font-medium">Subject:</span> {job?.email_preview?.subject || "No subject"}</p>
                 <p className="text-slate-600"><span className="font-medium">Status:</span> {job?.email_preview?.status || "pending"}</p>
               </div>
@@ -84,11 +89,22 @@ export default function CustomerEmailPage() {
             </div>
             <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm">
               <p className="font-semibold text-slate-900">Email Information</p>
-              <p className="mt-2 text-slate-700"><span className="font-medium">To:</span> {selectedJob?.email_preview?.recipient_email || "-"}</p>
+              <p className="mt-2 text-slate-700"><span className="font-medium">To:</span> {selectedJob?.email_preview?.recipient_email || fallbackRecipient(selectedJob)}</p>
               <p className="text-slate-700"><span className="font-medium">Subject:</span> {selectedJob?.email_preview?.subject || "No subject"}</p>
               <p className="text-slate-700"><span className="font-medium">Status:</span> {selectedJob?.email_preview?.status || "pending"}</p>
               <p className="mt-2 whitespace-pre-wrap text-xs text-slate-500">{selectedJob?.email_preview?.body || "No email body available."}</p>
             </div>
+
+            {String(selectedJob?.status || "").toUpperCase() === "INVALID_FILENAME" && (
+              <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+                <p className="font-semibold">Upload Requirement Failure Details</p>
+                <p className="mt-2">Trigger Mechanism: Upload to designated intake folder.</p>
+                <p>File naming convention: <span className="font-semibold">ISBN_text</span> (example: <span className="font-semibold">1234567890123_text.pdf</span>).</p>
+                <p>Supported formats: <span className="font-semibold">PDF</span> and <span className="font-semibold">PNG</span>.</p>
+                <p className="mt-2 text-xs text-amber-800">Detected failure: {selectedJob?.issues?.[0]?.message || "Invalid filename format."}</p>
+                <p className="text-xs text-amber-800">Correction: Rename file, for example `9789378652616_text.png`, then resubmit.</p>
+              </div>
+            )}
           </div>
         </div>
       )}

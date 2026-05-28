@@ -59,6 +59,7 @@ def _default_state() -> dict:
         "processed_files": {},
         "pending_files": [],
         "jobs": [],
+        "stage_events": [],
         "last_run": None,
         "current_stage": "IDLE",
         "current_file": None,
@@ -83,6 +84,20 @@ def _save_state(payload: dict) -> None:
     path = _state_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+
+def _push_stage_event(state: dict, stage: str, filename: str | None = None) -> None:
+    events = state.setdefault("stage_events", [])
+    events.append(
+        {
+            "stage": stage,
+            "filename": filename or state.get("current_file"),
+            "timestamp": _now_iso(),
+        }
+    )
+    # Keep latest events only for UI.
+    if len(events) > 200:
+        del events[:-200]
 
 
 def _persist_simulation_artifacts(workflow: dict) -> None:
@@ -168,12 +183,14 @@ def _build_dashboard_summary(state: dict) -> dict:
     completed = sum(1 for j in jobs if j.get("pipeline_status") == "COMPLETED")
     pass_count = sum(1 for j in jobs if j.get("status") == "PASS")
     review_count = sum(1 for j in jobs if j.get("status") == "REVIEW_NEEDED")
+    invalid_filename_count = sum(1 for j in jobs if j.get("status") == "INVALID_FILENAME")
     overlap_count = sum(1 for j in jobs if any(i.get("type") in {"BADGE_OVERLAP", "UNCERTAIN_OVERLAP"} for i in j.get("issues", [])))
     return {
         "total_files_detected": total_detected,
         "completed_jobs": completed,
         "pass_count": pass_count,
         "review_needed_count": review_count,
+        "invalid_filename_count": invalid_filename_count,
         "overlap_detections": overlap_count,
         "processing_queue_count": len(state.get("pending_files", [])),
     }
@@ -224,40 +241,52 @@ def _process_one_file(db: Session, state: dict) -> None:
     filename = state["pending_files"].pop(0)
     state["current_file"] = filename
     state["current_stage"] = "NEW FILE FOUND"
+    _push_stage_event(state, "NEW FILE FOUND", filename)
 
     dataset_path = _dataset_dir() / filename
     if not dataset_path.exists():
         state["jobs"].append(_build_invalid_job(filename, "File not found in dataset directory."))
         state["current_stage"] = "COMPLETED"
+        _push_stage_event(state, "COMPLETED", filename)
         return
 
     state["current_stage"] = "UPLOADING"
+    _push_stage_event(state, "UPLOADING", filename)
     strict_match = STRICT_FILENAME_PATTERN.match(filename)
     flex_match = FLEX_FILENAME_PATTERN.match(filename)
     match = strict_match or flex_match
     if not match:
         state["jobs"].append(_build_invalid_job(filename, "Invalid filename format. Expected ISBN_text.extension"))
         state["current_stage"] = "COMPLETED"
+        _push_stage_event(state, "COMPLETED", filename)
         return
 
     isbn = match.group("isbn")
     ext = dataset_path.suffix.lower()
     normalized_upload_name = f"{isbn}_text{ext}"
     state["current_stage"] = "OCR PROCESSING"
+    _push_stage_event(state, "OCR PROCESSING", filename)
     with dataset_path.open("rb") as fp:
         upload = UploadFile(filename=normalized_upload_name, file=fp, headers=Headers({"content-type": _content_type(ext)}))
         workflow = run_automated_workflow(db=db, upload=upload).model_dump(mode="json")
     workflow["page_count"] = _get_page_count(dataset_path)
     state["current_stage"] = "SAFE-ZONE VALIDATION"
+    _push_stage_event(state, "SAFE-ZONE VALIDATION", filename)
     state["current_stage"] = "BADGE OVERLAP ANALYSIS"
+    _push_stage_event(state, "BADGE OVERLAP ANALYSIS", filename)
     state["current_stage"] = "QUALITY ANALYSIS"
+    _push_stage_event(state, "QUALITY ANALYSIS", filename)
     state["current_stage"] = "GENERATING ANNOTATIONS"
+    _push_stage_event(state, "GENERATING ANNOTATIONS", filename)
     state["current_stage"] = "GENERATING AIRTABLE RECORD"
+    _push_stage_event(state, "GENERATING AIRTABLE RECORD", filename)
     state["current_stage"] = "GENERATING EMAIL NOTIFICATION"
+    _push_stage_event(state, "GENERATING EMAIL NOTIFICATION", filename)
 
     _persist_simulation_artifacts(workflow)
     state["jobs"].append(_build_job_result(filename, workflow))
     state["current_stage"] = "COMPLETED"
+    _push_stage_event(state, "COMPLETED", filename)
 
 
 def ingest_sample_dataset(db: Session, force: bool = False) -> dict:
@@ -279,6 +308,7 @@ def get_ingestion_status() -> dict:
         "jobs": state.get("jobs", []),
         "summary": _build_dashboard_summary(state),
         "pipeline_stages": PIPELINE_STAGES,
+        "stage_events": state.get("stage_events", []),
         "current_stage": state.get("current_stage", "IDLE"),
         "current_file": state.get("current_file"),
     }

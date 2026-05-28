@@ -36,6 +36,17 @@ export default function UploadPage() {
     return "";
   }, [selectedFile]);
 
+  const requirementHint = useMemo(() => {
+    if (!selectedFile) return "";
+    if (!FILENAME_PATTERN.test(selectedFile.name)) {
+      return `Filename "${selectedFile.name}" does not match required pattern.`;
+    }
+    if (!ACCEPTED_TYPES.includes(selectedFile.type)) {
+      return `File type "${selectedFile.type || "unknown"}" is not supported.`;
+    }
+    return "";
+  }, [selectedFile]);
+
   const onPickFile = (file) => {
     setError("");
     setReport(null);
@@ -95,6 +106,19 @@ export default function UploadPage() {
 
           {!!validationError && <p className="mt-3 text-sm font-medium text-red-600">{validationError}</p>}
           {!!error && <p className="mt-3 text-sm font-medium text-red-600">{error}</p>}
+
+          {(!!validationError || !!error) && (
+            <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+              <p className="font-semibold">Workflow Automation Requirements</p>
+              <ul className="mt-2 space-y-1">
+                <li>- Trigger Mechanism: Upload cover into the monitored intake flow.</li>
+                <li>- File naming convention: <span className="font-semibold">ISBN_text</span> (example: <span className="font-semibold">1234567890123_text.pdf</span>).</li>
+                <li>- Supported formats: <span className="font-semibold">PDF</span> and <span className="font-semibold">PNG</span>.</li>
+              </ul>
+              {!!requirementHint && <p className="mt-3 text-xs font-semibold text-red-700">Failure detected: {requirementHint}</p>}
+              <p className="mt-1 text-xs text-amber-800">Quick fix: rename your file to the required format, for example `9789378652616_text.png`.</p>
+            </div>
+          )}
 
           <button type="button" onClick={handleUpload} disabled={!selectedFile || !!validationError || isUploading} className="mt-5 w-full rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40">
             {isUploading ? "Running QA..." : "Upload and Run QA"}

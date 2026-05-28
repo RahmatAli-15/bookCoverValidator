@@ -611,9 +611,48 @@
         "COMPLETED"
       ],
       "processing_time_ms": 28587
+    },
+    {
+      "filename": "good Shabd cover.png",
+      "isbn": "",
+      "file_type": "png",
+      "page_count": null,
+      "status": "INVALID_FILENAME",
+      "confidence_score": 0,
+      "readiness_score": 0,
+      "issues": [
+        {
+          "type": "INVALID_FILENAME",
+          "message": "Invalid filename format. Expected ISBN_text.extension"
+        }
+      ],
+      "annotation_path": "",
+      "executive_summary": "Invalid filename format. Expected ISBN_text.extension",
+      "operational_guidance": [
+        "Use ISBN-prefixed naming (9789373145068_text.png or 9789373145068_anylabel.png)."
+      ],
+      "correction_recommendation": [
+        "Preferred format: 9789373145068_text.png"
+      ],
+      "airtable_payload": {
+        "status": "pending",
+        "message": "Skipped due to invalid filename."
+      },
+      "email_preview": {
+        "subject": "Publishing QA: Ingestion Skipped",
+        "body": "Invalid filename format. Expected ISBN_text.extension"
+      },
+      "job_id": null,
+      "pipeline_status": "COMPLETED",
+      "pipeline_timeline": [
+        "NEW FILE FOUND",
+        "COMPLETED"
+      ],
+      "processing_time_ms": 0
     }
   ],
-  "last_run": "2026-05-28T05:33:16.028321+00:00",
+  "stage_events": [],
+  "last_run": "2026-05-28T05:57:13.703993+00:00",
   "current_stage": "COMPLETED",
   "current_file": null,
   "ruleset_version": "2026-05-26-badge-visual-overlap-v4"

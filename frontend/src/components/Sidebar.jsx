@@ -163,7 +163,7 @@ export default function Sidebar() {
                 {idx < STAGES.length - 1 && (
                   <div aria-hidden="true" className="absolute -bottom-5 left-5 flex h-4 w-3 flex-col items-center">
                     <span className={`h-3 w-px ${done || activeStage ? "bg-emerald-300" : "bg-slate-300"}`} />
-                    <span className={`text-[9px] leading-none ${done || activeStage ? "text-emerald-400" : "text-slate-400"}`}>▼</span>
+                    <span className={`text-[9px] leading-none ${done || activeStage ? "text-emerald-400" : "text-slate-400"}`}>v</span>
                   </div>
                 )}
                 <StageIcon state={stageState} stage={stage} />
@@ -174,11 +174,11 @@ export default function Sidebar() {
                       ? "bg-emerald-100 text-emerald-700"
                       : activeStage
                         ? "bg-brand-100 text-brand-700"
-                        : "bg-red-100 text-red-600"
+                        : "bg-slate-100 text-slate-500"
                   }`}
-                  title={done ? "Completed" : activeStage ? "Running" : "Not completed"}
+                  title={done ? "Completed" : activeStage ? "Running" : "Pending"}
                 >
-                  {done ? "✓" : activeStage ? "•" : "✕"}
+                  {done ? "OK" : activeStage ? "..." : "-"}
                 </span>
               </div>
             );

@@ -82,6 +82,10 @@ export default function DashboardPage() {
 
   const summary = status?.summary || {};
   const jobs = status?.jobs || [];
+  const stageEvents = status?.stage_events || [];
+  const latestEvent = stageEvents.length ? stageEvents[stageEvents.length - 1] : null;
+  const latestFile = latestEvent?.filename || status?.current_file || "-";
+  const latestStage = latestEvent?.stage || status?.current_stage || "IDLE";
   const visibleJobs = jobs.filter((job) => {
     const statusText = String(job?.status || "").toUpperCase();
     if (statusFilter !== "ALL" && statusText !== statusFilter) return false;
@@ -127,14 +131,47 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
-        <article className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-sm text-slate-500">Total Files Detected</p><p className="mt-1 text-2xl font-bold text-slate-900">{summary.total_files_detected ?? 0}</p></article>
-        <article className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-sm text-slate-500">Processing Queue</p><p className="mt-1 text-2xl font-bold text-slate-900">{summary.processing_queue_count ?? 0}</p></article>
-        <article className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-sm text-slate-500">Completed Jobs</p><p className="mt-1 text-2xl font-bold text-slate-900">{summary.completed_jobs ?? 0}</p></article>
-        <article className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-sm text-slate-500">PASS</p><p className="mt-1 text-2xl font-bold text-emerald-700">{summary.pass_count ?? 0}</p></article>
-        <article className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-sm text-slate-500">REVIEW_NEEDED</p><p className="mt-1 text-2xl font-bold text-amber-700">{summary.review_needed_count ?? 0}</p></article>
-        <article className="rounded-xl border border-slate-200 bg-white p-4"><p className="text-sm text-slate-500">Overlap Detections</p><p className="mt-1 text-2xl font-bold text-red-700">{summary.overlap_detections ?? 0}</p></article>
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-7">
+        {[
+          { label: "Total Files", value: summary.total_files_detected ?? 0, valueClass: "text-slate-900", chipClass: "bg-slate-100 text-slate-700", chip: "TF", borderClass: "border-slate-200" },
+          { label: "Processing Queue", value: summary.processing_queue_count ?? 0, valueClass: "text-indigo-700", chipClass: "bg-indigo-100 text-indigo-700", chip: "PQ", borderClass: "border-indigo-200" },
+          { label: "Completed Jobs", value: summary.completed_jobs ?? 0, valueClass: "text-slate-900", chipClass: "bg-cyan-100 text-cyan-700", chip: "CJ", borderClass: "border-cyan-200" },
+          { label: "PASS", value: summary.pass_count ?? 0, valueClass: "text-emerald-700", chipClass: "bg-emerald-100 text-emerald-700", chip: "PS", borderClass: "border-emerald-200" },
+          { label: "REVIEW_NEEDED", value: summary.review_needed_count ?? 0, valueClass: "text-amber-700", chipClass: "bg-amber-100 text-amber-700", chip: "RN", borderClass: "border-amber-200" },
+          { label: "INVALID_FILENAME", value: summary.invalid_filename_count ?? 0, valueClass: "text-rose-700", chipClass: "bg-rose-100 text-rose-700", chip: "IF", borderClass: "border-rose-200" },
+          { label: "Overlap Detections", value: summary.overlap_detections ?? 0, valueClass: "text-red-700", chipClass: "bg-red-100 text-red-700", chip: "OD", borderClass: "border-red-200" },
+        ].map((card) => (
+          <article
+            key={card.label}
+            className={`rounded-xl border ${card.borderClass} bg-gradient-to-b from-white to-slate-50 p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md min-h-[116px] flex flex-col`}
+          >
+            <div className="flex items-start justify-between gap-2">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.04em] leading-tight text-slate-500 break-words whitespace-normal max-w-[80%]">{card.label}</p>
+              <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold ${card.chipClass}`}>{card.chip}</span>
+            </div>
+            <p className={`mt-auto pt-2 text-4xl font-extrabold leading-none ${card.valueClass}`}>{card.value}</p>
+          </article>
+        ))}
       </div>
+
+      <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-base font-semibold text-slate-900">Live Processing Flow</h3>
+          <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">Current: {latestStage}</span>
+        </div>
+        <p className="mt-1 text-xs text-slate-500">Active file: {latestFile}</p>
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-5">
+          {(status?.pipeline_stages || []).map((stage) => {
+            const reached = stageEvents.some((e) => e.stage === stage && e.filename === latestFile);
+            const active = stage === latestStage;
+            return (
+              <div key={stage} className={`rounded-lg border px-3 py-2 text-xs font-semibold ${active ? "border-indigo-300 bg-indigo-50 text-indigo-800" : reached ? "border-emerald-200 bg-emerald-50 text-emerald-700" : "border-slate-200 bg-slate-50 text-slate-500"}`}>
+                {stage}
+              </div>
+            );
+          })}
+        </div>
+      </article>
 
       <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-wrap items-end justify-between gap-3">
